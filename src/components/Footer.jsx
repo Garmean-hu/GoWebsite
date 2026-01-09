@@ -1,15 +1,14 @@
 import React from 'react';
-import { Layout, Typography, Row, Col } from 'antd';
+import { Typography, Row, Col } from 'antd';
 import { Link } from 'react-router-dom';
 import { GithubOutlined, MailOutlined, WechatOutlined } from '@ant-design/icons';
 import '../styles.css';
 
-const { Footer: AntFooter } = Layout;
 const { Title, Text } = Typography;
 
 const Footer = () => {
   return (
-    <AntFooter style={{ background: '#f0f2f5', padding: '50px 0 20px' }}>
+    <div className="footer" style={{ background: '#f0f2f5', padding: '50px 0 20px' }}>
       <div className="container">
         <Row gutter={[32, 24]} justify="center">
           <Col xs={24} sm={12} md={8}>
@@ -57,7 +56,7 @@ const Footer = () => {
           </Text>
         </div>
       </div>
-    </AntFooter>
+    </div>
   );
 };
 

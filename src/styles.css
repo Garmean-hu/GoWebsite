@@ -99,21 +99,17 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-}
-
-.header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  flex-wrap: wrap;
-  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 搜索容器样式 */
 .search-container {
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 300px;
+  min-width: 150px;
 }
 
 .search-input {
@@ -869,11 +865,25 @@ body {
   .header .container {
     flex-direction: column;
     gap: 15px;
+    align-items: stretch;
+  }
+  
+  .logo {
+    text-align: center;
   }
   
   .nav {
     width: 100%;
     justify-content: center;
+  }
+  
+  .search-container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .search-container .ant-input-search {
+    width: 100% !important;
   }
   
   .hero h2 {

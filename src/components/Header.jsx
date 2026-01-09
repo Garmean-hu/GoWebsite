@@ -1,16 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Input } from 'antd';
+import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import '../styles.css';
 
-const { Header: AntHeader } = Layout;
 const { Search } = Input;
 
 function Header({ searchTerm, setSearchTerm }) {
   return (
-    <AntHeader className="header">
-      <div className="container">
+    <div className="header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', maxWidth: '100%', boxSizing: 'border-box' }}>
         <div className="logo">
           <h1>Garmean官网通</h1>
         </div>
@@ -28,11 +27,11 @@ function Header({ searchTerm, setSearchTerm }) {
             size="middle"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: 300 }}
+            style={{ width: '100%', maxWidth: 300 }}
           />
         </div>
       </div>
-    </AntHeader>
+    </div>
   );
 }
 
