@@ -24,21 +24,149 @@ function Home({ searchTerm }) {
   }, [images.length]);
 
   // 分类列表
-  const categories = ['全部', '学习', '娱乐', '生活', '新闻', '购物', '绅士'];
+  const categories = ['全部', '学习', '娱乐', '生活', '新闻', '购物', 'DevOps', '绅士',];
+  
+  // DevOps子分类列表
+  const devOpsSubcategories = [
+    '全部',
+    '代码管理',
+    '构建工具',
+    '自动部署',
+    '持续集成',
+    '配置管理',
+    '容器',
+    '编排',
+    '服务注册与发现',
+    '脚本语言',
+    '日志管理',
+    '系统监控',
+    '性能监控',
+    '压力测试',
+    '预警',
+    'HTTP加速',
+    '消息总线',
+    '应用服务器',
+    'Web服务器',
+    '数据库',
+    '项目管理'
+  ];
   
   // 当前选中的分类
   const [selectedCategory, setSelectedCategory] = useState('全部');
+  
+  // 当前选中的DevOps子分类
+  const [selectedSubcategory, setSelectedSubcategory] = useState('全部');
 
   // 网站数据数组，包含拼音和分类字段
   const websites = [
     // 学习类
     { name: 'Angular', pinyin: 'angular', url: 'https://angular.io/', text: 'Angular官方网址', category: '学习' },
     { name: 'Atom', pinyin: 'atom', url: 'https://atom.io/', text: 'Atom编辑器官方网址', category: '学习' },
-    { name: 'Bitbucket', pinyin: 'bitbucket', url: 'https://bitbucket.org/', text: 'Bitbucket官方网址', category: '学习' },
-    { name: 'Docker', pinyin: 'docker', url: 'https://www.docker.com/', text: 'Docker官方网址', category: '学习' },
     { name: 'Eclipse', pinyin: 'eclipse', url: 'https://www.eclipse.org/', text: 'Eclipse官方网址', category: '学习' },
-    { name: 'GitHub', pinyin: 'github', url: 'https://github.com/', text: 'GitHub官方网址', category: '学习' },
-    { name: 'GitLab', pinyin: 'gitlab', url: 'https://about.gitlab.com/', text: 'GitLab官方网址', category: '学习' },
+    
+    // DevOps类 - 代码管理
+    { name: 'Bitbucket', pinyin: 'bitbucket', url: 'https://bitbucket.org/', text: 'Bitbucket官方网址', category: 'DevOps', subcategory: '代码管理' },
+    { name: 'GitHub', pinyin: 'github', url: 'https://github.com/', text: 'GitHub官方网址', category: 'DevOps', subcategory: '代码管理' },
+    { name: 'GitLab', pinyin: 'gitlab', url: 'https://about.gitlab.com/', text: 'GitLab官方网址', category: 'DevOps', subcategory: '代码管理' },
+    
+    // DevOps类 - 容器
+    { name: 'Docker', pinyin: 'docker', url: 'https://www.docker.com/', text: 'Docker官方网址', category: 'DevOps', subcategory: '容器' },
+    
+    // DevOps类 - 代码管理
+    { name: 'Subversion', pinyin: 'subversion', url: 'https://subversion.apache.org/', text: 'Subversion官方网址', category: 'DevOps', subcategory: '代码管理' },
+    
+    // DevOps类 - 构建工具
+    { name: 'Apache Ant', pinyin: 'apacheant', url: 'https://ant.apache.org/', text: 'Apache Ant官方网址', category: 'DevOps', subcategory: '构建工具' },
+    { name: 'Gradle', pinyin: 'gradle', url: 'https://gradle.org/', text: 'Gradle官方网址', category: 'DevOps', subcategory: '构建工具' },
+    { name: 'Apache Maven', pinyin: 'apachemaven', url: 'https://maven.apache.org/', text: 'Apache Maven官方网址', category: 'DevOps', subcategory: '构建工具' },
+    
+    // DevOps类 - 自动部署
+    { name: 'Capistrano', pinyin: 'capistrano', url: 'https://capistranorb.com/', text: 'Capistrano官方网址', category: 'DevOps', subcategory: '自动部署' },
+    { name: 'AWS CodeDeploy', pinyin: 'awscodedeploy', url: 'https://aws.amazon.com/codedeploy/', text: 'AWS CodeDeploy官方网址', category: 'DevOps', subcategory: '自动部署' },
+    
+    // DevOps类 - 持续集成
+    { name: 'Atlassian Bamboo', pinyin: 'atlassianbamboo', url: 'https://www.atlassian.com/software/bamboo', text: 'Atlassian Bamboo官方网址', category: 'DevOps', subcategory: '持续集成' },
+    { name: 'Hudson', pinyin: 'hudson', url: 'https://hudson-ci.org/', text: 'Hudson官方网址', category: 'DevOps', subcategory: '持续集成' },
+    { name: 'Jenkins', pinyin: 'jenkins', url: 'https://www.jenkins.io/', text: 'Jenkins官方网址', category: 'DevOps', subcategory: '持续集成' },
+    
+    // DevOps类 - 配置管理
+    { name: 'Ansible', pinyin: 'ansible', url: 'https://www.ansible.com/', text: 'Ansible官方网址', category: 'DevOps', subcategory: '配置管理' },
+    { name: 'Chef', pinyin: 'chef', url: 'https://www.chef.io/', text: 'Chef官方网址', category: 'DevOps', subcategory: '配置管理' },
+    { name: 'Puppet', pinyin: 'puppet', url: 'https://puppet.com/', text: 'Puppet官方网址', category: 'DevOps', subcategory: '配置管理' },
+    { name: 'SaltStack', pinyin: 'saltstack', url: 'https://saltproject.io/', text: 'SaltStack官方网址', category: 'DevOps', subcategory: '配置管理' },
+    
+    // DevOps类 - 容器
+    { name: 'LXC', pinyin: 'lxc', url: 'https://linuxcontainers.org/lxc/', text: 'LXC官方网址', category: 'DevOps', subcategory: '容器' },
+    { name: 'AWS', pinyin: 'aws', url: 'https://aws.amazon.com/', text: 'AWS官方网址', category: 'DevOps', subcategory: '容器' },
+    
+    // DevOps类 - 编排
+    { name: 'Kubernetes', pinyin: 'kubernetes', url: 'https://kubernetes.io/', text: 'Kubernetes官方网址', category: 'DevOps', subcategory: '编排' },
+    { name: 'Apache Mesos', pinyin: 'apachemesos', url: 'https://mesos.apache.org/', text: 'Apache Mesos官方网址', category: 'DevOps', subcategory: '编排' },
+    { name: 'DC/OS', pinyin: 'dcos', url: 'https://dcos.io/', text: 'DC/OS官方网址', category: 'DevOps', subcategory: '编排' },
+    
+    // DevOps类 - 服务注册与发现
+    { name: 'Apache ZooKeeper', pinyin: 'apachezookeeper', url: 'https://zookeeper.apache.org/', text: 'Apache ZooKeeper官方网址', category: 'DevOps', subcategory: '服务注册与发现' },
+    { name: 'etcd', pinyin: 'etcd', url: 'https://etcd.io/', text: 'etcd官方网址', category: 'DevOps', subcategory: '服务注册与发现' },
+    { name: 'Consul', pinyin: 'consul', url: 'https://www.consul.io/', text: 'Consul官方网址', category: 'DevOps', subcategory: '服务注册与发现' },
+    
+    // DevOps类 - 脚本语言
+    { name: 'Ruby', pinyin: 'ruby', url: 'https://www.ruby-lang.org/', text: 'Ruby官方网址', category: 'DevOps', subcategory: '脚本语言' },
+    
+    // DevOps类 - 日志管理
+    { name: 'ELK Stack', pinyin: 'elkstack', url: 'https://www.elastic.co/what-is/elk-stack', text: 'ELK Stack官方网址', category: 'DevOps', subcategory: '日志管理' },
+    { name: 'Logentries', pinyin: 'logentries', url: 'https://logentries.com/', text: 'Logentries官方网址', category: 'DevOps', subcategory: '日志管理' },
+    
+    // DevOps类 - 系统监控
+    { name: 'Datadog', pinyin: 'datadog', url: 'https://www.datadoghq.com/', text: 'Datadog官方网址', category: 'DevOps', subcategory: '系统监控' },
+    { name: 'Graphite', pinyin: 'graphite', url: 'https://graphiteapp.org/', text: 'Graphite官方网址', category: 'DevOps', subcategory: '系统监控' },
+    { name: 'Icinga', pinyin: 'icinga', url: 'https://icinga.com/', text: 'Icinga官方网址', category: 'DevOps', subcategory: '系统监控' },
+    { name: 'Nagios', pinyin: 'nagios', url: 'https://www.nagios.org/', text: 'Nagios官方网址', category: 'DevOps', subcategory: '系统监控' },
+    
+    // DevOps类 - 性能监控
+    { name: 'AppDynamics', pinyin: 'appdynamics', url: 'https://www.appdynamics.com/', text: 'AppDynamics官方网址', category: 'DevOps', subcategory: '性能监控' },
+    { name: 'New Relic', pinyin: 'newrelic', url: 'https://newrelic.com/', text: 'New Relic官方网址', category: 'DevOps', subcategory: '性能监控' },
+    { name: 'Splunk', pinyin: 'splunk', url: 'https://www.splunk.com/', text: 'Splunk官方网址', category: 'DevOps', subcategory: '性能监控' },
+    
+    // DevOps类 - 压力测试
+    { name: 'JMeter', pinyin: 'jmeter', url: 'https://jmeter.apache.org/', text: 'JMeter官方网址', category: 'DevOps', subcategory: '压力测试' },
+    { name: 'BlazeMeter', pinyin: 'blazemeter', url: 'https://www.blazemeter.com/', text: 'BlazeMeter官方网址', category: 'DevOps', subcategory: '压力测试' },
+    { name: 'loader.io', pinyin: 'loaderio', url: 'https://loader.io/', text: 'loader.io官方网址', category: 'DevOps', subcategory: '压力测试' },
+    
+    // DevOps类 - 预警
+    { name: 'PagerDuty', pinyin: 'pagerduty', url: 'https://www.pagerduty.com/', text: 'PagerDuty官方网址', category: 'DevOps', subcategory: '预警' },
+    { name: 'Pingdom', pinyin: 'pingdom', url: 'https://www.pingdom.com/', text: 'Pingdom官方网址', category: 'DevOps', subcategory: '预警' },
+    
+    // DevOps类 - HTTP加速
+    { name: 'Varnish', pinyin: 'varnish', url: 'https://varnish-cache.org/', text: 'Varnish官方网址', category: 'DevOps', subcategory: 'HTTP加速' },
+    
+    // DevOps类 - 消息总线
+    { name: 'Apache ActiveMQ', pinyin: 'apacheactivemq', url: 'https://activemq.apache.org/', text: 'Apache ActiveMQ官方网址', category: 'DevOps', subcategory: '消息总线' },
+    { name: 'AWS SQS', pinyin: 'awssqs', url: 'https://aws.amazon.com/sqs/', text: 'AWS SQS官方网址', category: 'DevOps', subcategory: '消息总线' },
+    
+    // DevOps类 - 应用服务器
+    { name: 'Apache Tomcat', pinyin: 'apachetomcat', url: 'https://tomcat.apache.org/', text: 'Apache Tomcat官方网址', category: 'DevOps', subcategory: '应用服务器' },
+    { name: 'JBoss', pinyin: 'jboss', url: 'https://www.redhat.com/en/technologies/jboss-middleware/application-platform', text: 'JBoss官方网址', category: 'DevOps', subcategory: '应用服务器' },
+    
+    // DevOps类 - Web服务器
+    { name: 'Apache HTTP Server', pinyin: 'apachehttpserver', url: 'https://httpd.apache.org/', text: 'Apache HTTP Server官方网址', category: 'DevOps', subcategory: 'Web服务器' },
+    { name: 'Nginx', pinyin: 'nginx', url: 'https://nginx.org/', text: 'Nginx官方网址', category: 'DevOps', subcategory: 'Web服务器' },
+    { name: 'IIS', pinyin: 'iis', url: 'https://www.iis.net/', text: 'IIS官方网址', category: 'DevOps', subcategory: 'Web服务器' },
+    
+    // DevOps类 - 数据库
+    { name: 'MySQL', pinyin: 'mysql', url: 'https://www.mysql.com/', text: 'MySQL官方网址', category: 'DevOps', subcategory: '数据库' },
+    { name: 'Oracle', pinyin: 'oracle', url: 'https://www.oracle.com/', text: 'Oracle官方网址', category: 'DevOps', subcategory: '数据库' },
+    { name: 'PostgreSQL', pinyin: 'postgresql', url: 'https://www.postgresql.org/', text: 'PostgreSQL官方网址', category: 'DevOps', subcategory: '数据库' },
+    { name: 'Cassandra', pinyin: 'cassandra', url: 'https://cassandra.apache.org/', text: 'Cassandra官方网址', category: 'DevOps', subcategory: '数据库' },
+    { name: 'MongoDB', pinyin: 'mongodb', url: 'https://www.mongodb.com/', text: 'MongoDB官方网址', category: 'DevOps', subcategory: '数据库' },
+    { name: 'Redis', pinyin: 'redis', url: 'https://redis.io/', text: 'Redis官方网址', category: 'DevOps', subcategory: '数据库' },
+    
+    // DevOps类 - 项目管理
+    { name: 'Jira', pinyin: 'jira', url: 'https://www.atlassian.com/software/jira', text: 'Jira官方网址', category: 'DevOps', subcategory: '项目管理' },
+    { name: 'Asana', pinyin: 'asana', url: 'https://asana.com/', text: 'Asana官方网址', category: 'DevOps', subcategory: '项目管理' },
+    { name: 'Taiga', pinyin: 'taiga', url: 'https://taiga.io/', text: 'Taiga官方网址', category: 'DevOps', subcategory: '项目管理' },
+    { name: 'Trello', pinyin: 'trello', url: 'https://trello.com/', text: 'Trello官方网址', category: 'DevOps', subcategory: '项目管理' },
+    { name: 'Basecamp', pinyin: 'basecamp', url: 'https://basecamp.com/', text: 'Basecamp官方网址', category: 'DevOps', subcategory: '项目管理' },
+    { name: 'Pivotal Tracker', pinyin: 'pivotaltracker', url: 'https://www.pivotaltracker.com/', text: 'Pivotal Tracker官方网址', category: 'DevOps', subcategory: '项目管理' },
     { name: 'IntelliJ IDEA', pinyin: 'intellijidea', url: 'https://www.jetbrains.com/idea/', text: 'IntelliJ IDEA官方网址', category: '学习' },
     { name: 'Java', pinyin: 'java', url: 'https://www.java.com/', text: 'Java官方网址', category: '学习' },
     { name: 'JavaScript', pinyin: 'javascript', url: 'https://developer.mozilla.org/zh-CN/docs/Web/JavaScript', text: 'JavaScript官方文档', category: '学习' },
@@ -146,7 +274,14 @@ function Home({ searchTerm }) {
     
     const matchesCategory = (selectedCategory === '全部' && website.category !== '绅士') || website.category === selectedCategory;
     
-    return matchesSearch && matchesCategory;
+    // 只有DevOps分类下的网站需要进行子分类过滤
+    const matchesSubcategory = (
+      selectedCategory !== 'DevOps' || 
+      selectedSubcategory === '全部' || 
+      website.subcategory === selectedSubcategory
+    );
+    
+    return matchesSearch && matchesCategory && matchesSubcategory;
   });
 
   return (
@@ -190,13 +325,32 @@ function Home({ searchTerm }) {
             {categories.map(category => (
               <button
                 key={category}
-                className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category)}
+                className={`category-btn ${selectedCategory === category ? 'active' : ''} ${category === '绅士' ? 'gentleman-category' : ''}`}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  // 切换分类时重置子分类
+                  setSelectedSubcategory('全部');
+                }}
               >
                 {category}
               </button>
             ))}
           </div>
+          
+          {/* DevOps子分类栏目 - 仅当选择DevOps分类时显示 */}
+          {selectedCategory === 'DevOps' && (
+            <div className="categories subcategories">
+              {devOpsSubcategories.map(subcategory => (
+                <button
+                  key={subcategory}
+                  className={`category-btn ${selectedSubcategory === subcategory ? 'active' : ''}`}
+                  onClick={() => setSelectedSubcategory(subcategory)}
+                >
+                  {subcategory}
+                </button>
+              ))}
+            </div>
+          )}
           
           {/* 显示搜索结果数量 */}
           {(searchTerm || selectedCategory !== '全部') && (
