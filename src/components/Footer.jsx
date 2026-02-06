@@ -14,7 +14,7 @@ const Footer = () => {
           <Col xs={24} sm={12} md={8}>
             <div style={{ textAlign: 'center' }}>
               <Title level={4} style={{ color: '#4a90e2', marginBottom: 16 }}>
-                Garmean官网通
+                GoWeb
               </Title>
               <Text type="secondary">
                 聚合各类官方网站，便捷访问

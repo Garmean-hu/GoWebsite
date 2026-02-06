@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import '../styles.css';
 
 function Home({ searchTerm }) {
@@ -59,26 +59,9 @@ function Home({ searchTerm }) {
   
   // 字母检索相关
   const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#'];
-  
-  // 获取网站名称的首字母（支持中文拼音首字母和数字）
-  const getFirstLetter = (name) => {
-    // 检查是否以数字开头
-    if (/^[0-9]/.test(name)) {
-      return '#';
-    }
-    
-    // 检查是否有拼音字段
-    const website = websites.find(w => w.name === name);
-    if (website && website.pinyin) {
-      return website.pinyin[0].toUpperCase();
-    }
-    
-    // 默认返回 #
-    return '#';
-  };
 
   // 网站数据数组，包含拼音和分类字段
-  const websites = [
+  const websites = useMemo(() => [
     // 学习类
     { name: 'Angular', pinyin: 'angular', url: 'https://angular.io/', text: 'Angular官方网址', category: '学习', description: 'Angular是Google开发的开源前端框架，用于构建高性能、跨平台的Web应用。' },
     { name: 'Atom', pinyin: 'atom', url: 'https://atom.io/', text: 'Atom编辑器官方网址', category: '学习', description: 'Atom是GitHub开发的开源文本编辑器，支持插件扩展，可定制性强。' },
@@ -255,7 +238,24 @@ function Home({ searchTerm }) {
     { name: '俄罗斯搜索引擎', pinyin: 'eluosisousuoyinqing', url: 'http://www.yandex.com/', text: '俄罗斯搜索引擎官方网址', category: '绅士' },
     { name: '每日大赛', pinyin: 'meiridasai', url: 'https://h5gpz2.aspyies.xyz/', text: '每日大赛官方网址', category: '绅士' },
     
-  ];
+  ], []);
+
+  // 获取网站名称的首字母（支持中文拼音首字母和数字）
+  const getFirstLetter = useCallback((name) => {
+    // 检查是否以数字开头
+    if (/^[0-9]/.test(name)) {
+      return '#';
+    }
+    
+    // 检查是否有拼音字段
+    const website = websites.find(w => w.name === name);
+    if (website && website.pinyin) {
+      return website.pinyin[0].toUpperCase();
+    }
+    
+    // 默认返回 #
+    return '#';
+  }, [websites]);
 
   // 对网站列表按照pinyin字段进行排序，数字优先
   const sortedWebsites = [...websites].sort((a, b) => {
@@ -377,7 +377,7 @@ useEffect(() => {
     window.removeEventListener('scroll', handleScroll);
     clearTimeout(timeoutId);
   };
-}, [filteredWebsites]);
+}, [filteredWebsites, getFirstLetter]);
   // 鼠标悬停显示简介
   useEffect(() => {
     const addHoverListeners = () => {
