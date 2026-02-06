@@ -94,7 +94,7 @@ body {
 
 /* 头部样式 */
 .header {
-  background-color: #161513;
+  background-color: #1d0b01d2;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
@@ -130,7 +130,7 @@ body {
 
 /* Ant Design 搜索按钮样式覆盖 */
 .ant-input-search-button {
-  background: rgb(36, 1, 7) !important;
+  background: rgb(41, 13, 17) !important;
   border-color: #ffffff !important;
 }
 
@@ -1134,7 +1134,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  z-index: 1000;
+  z-index: 999;
   background: transparent;
   padding: 5px 2px;
   border-radius: 0;
@@ -1174,7 +1174,7 @@ body {
 }
 
 /* 全局响应式优化 */
-@media (max-width: 767.98px) {
+@media (max-width: 575.98px) {
   /* 优化按钮点击区域 */
   .category-btn {
     min-height: 36px;
@@ -1203,9 +1203,9 @@ body {
   }
   
   .letter-btn {
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
   }
 }
 
@@ -1219,8 +1219,8 @@ body {
   }
   
   .letter-btn {
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
     font-size: 10px;
   }
 }
@@ -1242,7 +1242,23 @@ body {
 }
 
 /* 大屏幕响应式 */
-@media (min-width: 992px) {
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  /* 字母检索栏响应式 */
+  .letter-index {
+    right: 6px;
+    gap: 2px;
+    padding: 5px 2px;
+  }
+  
+  .letter-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+}
+
+/* 超大屏幕响应式 */
+@media (min-width: 1200px) {
   /* 字母检索栏响应式 */
   .letter-index {
     right: 8px;
@@ -1251,8 +1267,36 @@ body {
   }
   
   .letter-btn {
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+}
+
+/* 横屏模式响应式 */
+@media (orientation: landscape) and (max-height: 600px) {
+  /* 字母检索栏响应式 */
+  .letter-index {
+    right: 4px;
+    gap: 1px;
+    padding: 4px 2px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .letter-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  
+  /* 隐藏滚动条但保持功能 */
+  .letter-index::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .letter-index {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
