@@ -56,6 +56,26 @@ function Home({ searchTerm }) {
   
   // 当前选中的DevOps子分类
   const [selectedSubcategory, setSelectedSubcategory] = useState('全部');
+  
+  // 字母检索相关
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#'];
+  
+  // 获取网站名称的首字母（支持中文拼音首字母和数字）
+  const getFirstLetter = (name) => {
+    // 检查是否以数字开头
+    if (/^[0-9]/.test(name)) {
+      return '#';
+    }
+    
+    // 检查是否有拼音字段
+    const website = websites.find(w => w.name === name);
+    if (website && website.pinyin) {
+      return website.pinyin[0].toUpperCase();
+    }
+    
+    // 默认返回 #
+    return '#';
+  };
 
   // 网站数据数组，包含拼音和分类字段
   const websites = [
@@ -283,9 +303,74 @@ function Home({ searchTerm }) {
     
     return matchesSearch && matchesCategory && matchesSubcategory;
   });
+  
+  // 滚动到对应字母位置
+  const scrollToLetter = (letter) => {
+    // 找到第一个以该字母开头的网站的索引
+    const targetIndex = filteredWebsites.findIndex(website => {
+      const firstLetter = getFirstLetter(website.name);
+      return firstLetter === letter;
+    });
+    
+    // 如果找到对应网站，滚动到该位置
+    if (targetIndex !== -1) {
+      // 滚动到网站列表的顶部，然后再滚动到对应位置
+      const container = document.querySelector('.website-info');
+      if (container) {
+        // 计算滚动位置
+        const infoBlocks = container.querySelectorAll('.info-block');
+        if (infoBlocks[targetIndex]) {
+          infoBlocks[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          // 如果找不到对应元素，滚动到顶部
+          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+  };
+  
+  // 滚动监听，高亮当前浏览区域的字母
+  const [activeLetter, setActiveLetter] = useState('');
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      // 计算当前可见区域的中心位置
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const centerPosition = scrollTop + windowHeight / 2;
+      
+      // 找到当前可见区域的网站
+      const infoBlocks = document.querySelectorAll('.info-block');
+      let currentLetter = '';
+      
+      infoBlocks.forEach((block, index) => {
+        if (index < filteredWebsites.length) {
+          const blockTop = block.offsetTop;
+          const blockHeight = block.offsetHeight;
+          
+          // 检查块是否在可见区域中心附近
+          if (blockTop <= centerPosition && blockTop + blockHeight >= centerPosition) {
+            const website = filteredWebsites[index];
+            currentLetter = getFirstLetter(website.name);
+          }
+        }
+      });
+      
+      setActiveLetter(currentLetter);
+    };
+    
+    // 添加滚动事件监听器
+    window.addEventListener('scroll', handleScroll);
+    
+    // 初始检查
+    handleScroll();
+    
+    // 清理事件监听器
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [filteredWebsites]);
 
   return (
-    <main className="main">
+    <main className="main" style={{ position: 'relative' }}>
       <section className="website-info">
         <div className="container">
           {/* 图片轮播 */}
@@ -379,6 +464,20 @@ function Home({ searchTerm }) {
           )}
         </div>
       </section>
+      
+      {/* 字母检索栏 */}
+      <div className="letter-index">
+        {letters.map(letter => (
+          <button
+            key={letter}
+            className={`letter-btn ${activeLetter === letter ? 'active' : ''}`}
+            onClick={() => scrollToLetter(letter)}
+            title={`滚动到以${letter}开头的网站`}
+          >
+            {letter}
+          </button>
+        ))}
+      </div>
     </main>
   );
 }

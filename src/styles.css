@@ -94,7 +94,7 @@ body {
 
 /* 头部样式 */
 .header {
-  background-color: white;
+  background-color: #161513;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
@@ -126,6 +126,25 @@ body {
   border-color: #4a90e2;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
   width: 350px;
+}
+
+/* Ant Design 搜索按钮样式覆盖 */
+.ant-input-search-button {
+  background: rgb(58, 32, 32) !important;
+  border-color: #ffffff !important;
+}
+
+.ant-input-search-button:hover {
+  background: #f5f5f5 !important;
+  border-color: #000000 !important;
+}
+
+.ant-input-search-icon {
+  color: black !important;
+}
+
+.ant-input-search-button:hover .ant-input-search-icon {
+  color: #ffffff !important;
 }
 
 /* 搜索结果信息 */
@@ -250,7 +269,7 @@ body {
 }
 
 .logo h1 {
-  color: #4a90e2;
+  color: #b93b1ce7;
   margin-bottom: 0;
 }
 
@@ -277,7 +296,7 @@ body {
 
 .nav a {
   text-decoration: none;
-  color: #333;
+  color: #ffffff;
   font-weight: 500;
   padding: 8px 12px;
   border-radius: 5px;
@@ -285,7 +304,7 @@ body {
 }
 
 .nav a:hover {
-  color: #4a90e2;
+  color: black;
   background-color: #f0f7ff;
 }
 
@@ -1106,6 +1125,54 @@ body {
   }
 }
 
+/* 字母检索栏样式 */
+.letter-index {
+  position: fixed;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1000;
+  background: transparent;
+  padding: 5px 2px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.letter-btn {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  outline: none;
+}
+
+.letter-btn:hover {
+  background: rgba(74, 144, 226, 0.1);
+  color: #4a90e2;
+  transform: scale(1.1);
+}
+
+.letter-btn.active {
+  background: transparent;
+  color: #4a90e2;
+  font-weight: bold;
+  font-size: 14px !important;
+  transform: scale(1.1);
+  box-shadow: none;
+}
+
 /* 全局响应式优化 */
 @media (max-width: 767.98px) {
   /* 优化按钮点击区域 */
@@ -1126,5 +1193,66 @@ body {
     word-break: break-all;
     display: block;
     margin-top: 5px;
+  }
+  
+  /* 字母检索栏响应式 */
+  .letter-index {
+    right: 3px;
+    gap: 1px;
+    padding: 3px 1px;
+  }
+  
+  .letter-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+}
+
+/* 小屏幕响应式 */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  /* 字母检索栏响应式 */
+  .letter-index {
+    right: 4px;
+    gap: 2px;
+    padding: 4px 2px;
+  }
+  
+  .letter-btn {
+    width: 19px;
+    height: 19px;
+    font-size: 10px;
+  }
+}
+
+/* 中等屏幕响应式 */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* 字母检索栏响应式 */
+  .letter-index {
+    right: 5px;
+    gap: 2px;
+    padding: 5px 2px;
+  }
+  
+  .letter-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+}
+
+/* 大屏幕响应式 */
+@media (min-width: 992px) {
+  /* 字母检索栏响应式 */
+  .letter-index {
+    right: 8px;
+    gap: 3px;
+    padding: 6px 3px;
+  }
+  
+  .letter-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
   }
 }

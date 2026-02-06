@@ -11,7 +11,7 @@ function Header({ searchTerm, setSearchTerm }) {
     <div className="header">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', maxWidth: '100%', boxSizing: 'border-box' }}>
         <div className="logo">
-          <h1>Garmean官网通</h1>
+          <h1>GoWeb</h1>
         </div>
         <nav className="nav">
           <ul>
