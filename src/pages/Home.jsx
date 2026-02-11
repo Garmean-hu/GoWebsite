@@ -1,6 +1,36 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import '../styles.css';
 
+// 记录浏览历史的函数
+const recordBrowseHistory = (website) => {
+  const history = JSON.parse(localStorage.getItem('browseHistory') || '[]');
+  
+  // 检查是否已经存在该网站的记录
+  const existingIndex = history.findIndex(item => item.url === website.url);
+  if (existingIndex !== -1) {
+    // 如果存在，移除旧记录
+    history.splice(existingIndex, 1);
+  }
+  
+  // 添加新记录到历史的开头
+  const newHistoryItem = {
+    id: Date.now(),
+    title: website.name,
+    url: website.url,
+    category: website.category,
+    timestamp: new Date().toISOString()
+  };
+  
+  history.unshift(newHistoryItem);
+  
+  // 限制历史记录的数量为20条
+  if (history.length > 20) {
+    history.splice(20);
+  }
+  
+  localStorage.setItem('browseHistory', JSON.stringify(history));
+};
+
 function Home({ searchTerm }) {
   // 轮播图片数据
   const images = [
@@ -504,7 +534,12 @@ useEffect(() => {
             >
               <p>
                 {website.text}：
-                <a href={website.url} target="_blank" rel="noopener noreferrer">
+                <a 
+                  href={website.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  onClick={() => recordBrowseHistory(website)}
+                >
                   {website.url}
                 </a>
               </p>
