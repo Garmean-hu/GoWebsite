@@ -9,6 +9,16 @@ const { Search } = Input;
 
 function Header({ searchTerm, setSearchTerm, user }) {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -21,11 +31,19 @@ function Header({ searchTerm, setSearchTerm, user }) {
 
   return (
     <div className="header">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', maxWidth: '100%', boxSizing: 'border-box' }}>
-        <div className="logo">
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        padding: '10px 15px', 
+        maxWidth: '100%', 
+        boxSizing: 'border-box',
+        flexWrap: 'wrap'
+      }}>
+        <div className="logo" style={{ marginBottom: isMobile ? '10px' : 0 }}>
           <h1>GoWeb</h1>
         </div>
-        <nav className="nav">
+        <nav className="nav" style={{ marginBottom: isMobile ? '10px' : 0 }}>
           <ul>
             <li><Link to="/">首页</Link></li>
             <li><Link to="/about">关于</Link></li>
@@ -34,8 +52,15 @@ function Header({ searchTerm, setSearchTerm, user }) {
             )}
           </ul>
         </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div className="search-container">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '10px',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end',
+          width: isMobile ? '100%' : 'auto'
+        }}>
+          <div className="search-container" style={{ marginBottom: isMobile ? '10px' : 0, width: isMobile ? '100%' : 'auto' }}>
             <Search
               placeholder="搜索网站..."
               allowClear
@@ -46,10 +71,10 @@ function Header({ searchTerm, setSearchTerm, user }) {
               style={{ width: '100%', maxWidth: 300 }}
             />
           </div>
-          <Space>
+          <Space style={{ width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'flex-end' : 'flex-start' }}>
             {user ? (
               <>
-                <span style={{ marginRight: '10px' }}>欢迎, {user.email}</span>
+                {!isMobile && <span style={{ marginRight: '10px' }}>欢迎, {user.email}</span>}
                 <Button 
                   type="primary" 
                   icon={<LogoutOutlined />} 
