@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Button, Typography, Card, List, Avatar, Tag, message, Drawer } from 'antd';
-import { UserOutlined, HistoryOutlined, LogoutOutlined, MenuOutlined } from '@ant-design/icons';
+import { Layout, Menu, Button, Typography, Card, List, Avatar, Tag, message, Drawer, Input, Modal, Upload } from 'antd';
+import { UserOutlined, HistoryOutlined, LogoutOutlined, MenuOutlined, StarOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from './services/auth';
+
+const { TextArea } = Input;
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -22,8 +24,27 @@ const Dashboard = ({ currentUser }) => {
   const [activeTab, setActiveTab] = useState('1');
   const [browseHistory, setBrowseHistory] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  
+  // 个人信息状态
+  const [nickname, setNickname] = useState(currentUser?.email?.split('@')[0] || '用户');
+  const [avatar, setAvatar] = useState(null);
+  
+  // 收藏网址状态
+  const [bookmarks, setBookmarks] = useState([]);
+  
+  // 模态框状态
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [avatarModalVisible, setAvatarModalVisible] = useState(false);
+  const [newBookmarkModalVisible, setNewBookmarkModalVisible] = useState(false);
+  
+  // 新收藏网址表单状态
+  const [newBookmark, setNewBookmark] = useState({
+    title: '',
+    url: '',
+    description: ''
+  });
 
-  // 获取浏览历史数据
+  // 获取浏览历史和收藏网址数据
   useEffect(() => {
     // 从本地存储获取浏览历史
     const history = JSON.parse(localStorage.getItem('browseHistory') || '[]');
@@ -57,6 +78,40 @@ const Dashboard = ({ currentUser }) => {
     } else {
       setBrowseHistory(history);
     }
+    
+    // 从本地存储获取收藏网址
+    const storedBookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+    if (storedBookmarks.length === 0) {
+      const mockBookmarks = [
+        {
+          id: Date.now(),
+          title: 'GitHub',
+          url: 'https://github.com/',
+          description: '全球最大的代码托管平台'
+        },
+        {
+          id: Date.now() - 1,
+          title: 'React',
+          url: 'https://reactjs.org/',
+          description: 'Facebook开发的前端框架'
+        }
+      ];
+      setBookmarks(mockBookmarks);
+      localStorage.setItem('bookmarks', JSON.stringify(mockBookmarks));
+    } else {
+      setBookmarks(storedBookmarks);
+    }
+    
+    // 从本地存储获取用户头像和昵称
+    const storedAvatar = localStorage.getItem('userAvatar');
+    if (storedAvatar) {
+      setAvatar(storedAvatar);
+    }
+    
+    const storedNickname = localStorage.getItem('userNickname');
+    if (storedNickname) {
+      setNickname(storedNickname);
+    }
   }, []);
 
   const handleLogout = async () => {
@@ -73,6 +128,58 @@ const Dashboard = ({ currentUser }) => {
     localStorage.removeItem('browseHistory');
     setBrowseHistory([]);
     message.success('浏览历史已清空');
+  };
+
+  // 修改昵称
+  const handleEditNickname = () => {
+    localStorage.setItem('userNickname', nickname);
+    setEditModalVisible(false);
+    message.success('昵称修改成功');
+  };
+
+  // 上传头像
+  const handleAvatarUpload = (info) => {
+    if (info.file.status === 'done') {
+      // 这里应该上传到服务器，现在只是模拟
+      const avatarUrl = URL.createObjectURL(info.file.originFileObj);
+      setAvatar(avatarUrl);
+      localStorage.setItem('userAvatar', avatarUrl);
+      message.success('头像上传成功');
+      setAvatarModalVisible(false);
+    } else if (info.file.status === 'error') {
+      message.error('头像上传失败');
+    }
+  };
+
+  // 添加收藏网址
+  const handleAddBookmark = () => {
+    if (!newBookmark.title || !newBookmark.url) {
+      message.error('请填写标题和网址');
+      return;
+    }
+    
+    const bookmark = {
+      id: Date.now(),
+      title: newBookmark.title,
+      url: newBookmark.url,
+      description: newBookmark.description,
+      timestamp: new Date().toISOString()
+    };
+    
+    const updatedBookmarks = [...bookmarks, bookmark];
+    setBookmarks(updatedBookmarks);
+    localStorage.setItem('bookmarks', JSON.stringify(updatedBookmarks));
+    setNewBookmarkModalVisible(false);
+    setNewBookmark({ title: '', url: '', description: '' });
+    message.success('网址收藏成功');
+  };
+
+  // 删除收藏网址
+  const handleDeleteBookmark = (id) => {
+    const updatedBookmarks = bookmarks.filter(bookmark => bookmark.id !== id);
+    setBookmarks(updatedBookmarks);
+    localStorage.setItem('bookmarks', JSON.stringify(updatedBookmarks));
+    message.success('收藏网址已删除');
   };
 
   const handleMenuClick = (key) => {
@@ -93,6 +200,11 @@ const Dashboard = ({ currentUser }) => {
       key: '2',
       icon: <HistoryOutlined />,
       label: '浏览历史',
+    },
+    {
+      key: '3',
+      icon: <StarOutlined />,
+      label: '收藏网址',
     }
   ];
 
@@ -104,7 +216,7 @@ const Dashboard = ({ currentUser }) => {
         alignItems: 'center', 
         justifyContent: 'space-between',
         backgroundColor: '#fff',
-        padding: '0 20px',
+        padding: '0 70px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         position: 'sticky',
         top: 0,
@@ -154,13 +266,14 @@ const Dashboard = ({ currentUser }) => {
       
       {/* 桌面端布局：侧边栏 + 主内容区 */}
       {!isMobile && (
-        <Layout>
+        <Layout style={{ flex: 1 }}>
           {/* 左侧侧边栏 */}
           <Sider 
             width={200} 
             style={{ 
               background: '#fff',
-              boxShadow: '2px 0 8px rgba(0,0,0,0.05)'
+              boxShadow: '2px 0 8px rgba(0,0,0,0.05)',
+              height: 'calc(100vh - 64px)'
             }}
           >
             {/* 个人信息头部 */}
@@ -169,10 +282,10 @@ const Dashboard = ({ currentUser }) => {
               borderBottom: '1px solid #f0f0f0',
               textAlign: 'center'
             }}>
-              <Avatar size={64} icon={<UserOutlined />} style={{ marginBottom: '12px' }} />
+              <Avatar size={64} src={avatar} icon={<UserOutlined />} style={{ marginBottom: '12px' }} />
               <div>
                 <Text strong style={{ display: 'block', marginBottom: '4px' }}>
-                  {currentUser?.email?.split('@')[0] || '用户'}
+                  {nickname}
                 </Text>
                 <Text type="secondary" style={{ fontSize: '12px' }}>
                   {currentUser?.email || '未知'}
@@ -204,7 +317,7 @@ const Dashboard = ({ currentUser }) => {
           </Sider>
           
           {/* 右侧主内容区 */}
-          <Content style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', flex: 1 }}>
+          <Content style={{ padding: '24px', flex: 1, overflow: 'auto' }}>
             {activeTab === '1' ? (
               <Card 
                 title="个人信息" 
@@ -214,9 +327,43 @@ const Dashboard = ({ currentUser }) => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
-                  <Avatar size={80} icon={<UserOutlined />} style={{ marginRight: '20px' }} />
+                  <div style={{ position: 'relative', marginRight: '20px' }}>
+                    <Avatar 
+                      size={80} 
+                      src={avatar} 
+                      icon={<UserOutlined />} 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setAvatarModalVisible(true)}
+                    />
+                    <div style={{ 
+                      position: 'absolute', 
+                      bottom: 0, 
+                      right: 0, 
+                      backgroundColor: '#1890ff', 
+                      borderRadius: '50%', 
+                      width: '24px', 
+                      height: '24px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      border: '2px solid white'
+                    }} onClick={() => setAvatarModalVisible(true)}>
+                      <EditOutlined style={{ color: 'white', fontSize: '12px' }} />
+                    </div>
+                  </div>
                   <div>
-                    <Title level={4} style={{ margin: 0 }}>{currentUser?.email?.split('@')[0] || '用户'}</Title>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Title level={4} style={{ margin: 0, marginRight: '10px' }}>{nickname}</Title>
+                      <Button 
+                        type="text" 
+                        icon={<EditOutlined />} 
+                        size="small"
+                        onClick={() => setEditModalVisible(true)}
+                      >
+                        编辑
+                      </Button>
+                    </div>
                     <Text>{currentUser?.email || '未知'}</Text>
                   </div>
                 </div>
@@ -230,7 +377,7 @@ const Dashboard = ({ currentUser }) => {
                   <Text strong>账号状态:</Text> <Tag color="green">已激活</Tag>
                 </div>
               </Card>
-            ) : (
+            ) : activeTab === '2' ? (
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                   <Title level={4} style={{ margin: 0 }}>浏览历史</Title>
@@ -277,7 +424,66 @@ const Dashboard = ({ currentUser }) => {
                 </Card>
               )}
               </>
-            )}
+            ) : activeTab === '3' ? (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <Title level={4} style={{ margin: 0 }}>收藏网址</Title>
+                  <Button type="primary" icon={<StarOutlined />} onClick={() => setNewBookmarkModalVisible(true)}>
+                    添加收藏
+                  </Button>
+                </div>
+                
+                {bookmarks.length > 0 ? (
+                  <List
+                    dataSource={bookmarks}
+                    renderItem={(item) => (
+                      <List.Item
+                        key={item.id}
+                        actions={[
+                          <Text key="time">{item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}</Text>,
+                          <Button 
+                            key="delete" 
+                            type="text" 
+                            danger 
+                            icon={<DeleteOutlined />}
+                            onClick={() => handleDeleteBookmark(item.id)}
+                          >
+                            删除
+                          </Button>
+                        ]}
+                        style={{ alignItems: 'flex-start' }}
+                      >
+                        <List.Item.Meta
+                          title={<a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff', textDecoration: 'none' }}>{item.title}</a>}
+                          description={
+                            <>
+                              <div style={{ marginBottom: '8px' }}>
+                                <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: '#666', textDecoration: 'none' }}>
+                                  {item.url}
+                                </a>
+                              </div>
+                              {item.description && (
+                                <Text type="secondary">{item.description}</Text>
+                              )}
+                            </>
+                          }
+                        />
+                      </List.Item>
+                    )}
+                  />
+                ) : (
+                  <Card style={{ borderRadius: '8px' }}>
+                    <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                      <StarOutlined style={{ fontSize: '48px', color: '#ccc' }} />
+                      <p style={{ marginTop: '20px', color: '#999' }}>暂无收藏网址</p>
+                      <Button type="primary" icon={<StarOutlined />} style={{ marginTop: '20px' }} onClick={() => setNewBookmarkModalVisible(true)}>
+                        添加收藏
+                      </Button>
+                    </div>
+                  </Card>
+                )}
+              </>
+            ) : null}
           </Content>
         </Layout>
       )}
@@ -295,9 +501,43 @@ const Dashboard = ({ currentUser }) => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
-                <Avatar size={80} icon={<UserOutlined />} style={{ marginRight: '20px' }} />
+                <div style={{ position: 'relative', marginRight: '20px' }}>
+                  <Avatar 
+                    size={80} 
+                    src={avatar} 
+                    icon={<UserOutlined />} 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setAvatarModalVisible(true)}
+                  />
+                  <div style={{ 
+                    position: 'absolute', 
+                    bottom: 0, 
+                    right: 0, 
+                    backgroundColor: '#1890ff', 
+                    borderRadius: '50%', 
+                    width: '24px', 
+                    height: '24px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    border: '2px solid white'
+                  }} onClick={() => setAvatarModalVisible(true)}>
+                    <EditOutlined style={{ color: 'white', fontSize: '12px' }} />
+                  </div>
+                </div>
                 <div>
-                  <Title level={4} style={{ margin: 0, fontSize: '18px' }}>{currentUser?.email?.split('@')[0] || '用户'}</Title>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Title level={4} style={{ margin: 0, marginRight: '10px', fontSize: '18px' }}>{nickname}</Title>
+                    <Button 
+                      type="text" 
+                      icon={<EditOutlined />} 
+                      size="small"
+                      onClick={() => setEditModalVisible(true)}
+                    >
+                      编辑
+                    </Button>
+                  </div>
                   <Text>{currentUser?.email || '未知'}</Text>
                 </div>
               </div>
@@ -311,6 +551,66 @@ const Dashboard = ({ currentUser }) => {
                 <Text strong>账号状态:</Text> <Tag color="green">已激活</Tag>
               </div>
             </Card>
+          ) : activeTab === '3' ? (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <Title level={4} style={{ margin: 0, fontSize: '18px' }}>收藏网址</Title>
+                <Button type="primary" icon={<StarOutlined />} size="small" onClick={() => setNewBookmarkModalVisible(true)}>
+                  添加收藏
+                </Button>
+              </div>
+              
+              {bookmarks.length > 0 ? (
+                <List
+                  dataSource={bookmarks}
+                  renderItem={(item) => (
+                    <List.Item
+                      key={item.id}
+                      actions={[
+                        <Text key="time" style={{ fontSize: '12px' }}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}</Text>,
+                        <Button 
+                          key="delete" 
+                          type="text" 
+                          danger 
+                          icon={<DeleteOutlined />}
+                          size="small"
+                          onClick={() => handleDeleteBookmark(item.id)}
+                        >
+                          删除
+                        </Button>
+                      ]}
+                      style={{ alignItems: 'flex-start' }}
+                    >
+                      <List.Item.Meta
+                        title={<a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff', textDecoration: 'none', fontSize: '14px' }}>{item.title}</a>}
+                        description={
+                          <>
+                            <div style={{ marginBottom: '8px' }}>
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: '#666', textDecoration: 'none', fontSize: '12px' }}>
+                                {item.url}
+                              </a>
+                            </div>
+                            {item.description && (
+                              <Text type="secondary" style={{ fontSize: '12px' }}>{item.description}</Text>
+                            )}
+                          </>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <Card style={{ borderRadius: '8px' }}>
+                  <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                    <StarOutlined style={{ fontSize: '48px', color: '#ccc' }} />
+                    <p style={{ marginTop: '20px', color: '#999' }}>暂无收藏网址</p>
+                    <Button type="primary" icon={<StarOutlined />} size="small" style={{ marginTop: '20px' }} onClick={() => setNewBookmarkModalVisible(true)}>
+                      添加收藏
+                    </Button>
+                  </div>
+                </Card>
+              )}
+            </>
           ) : (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -409,6 +709,69 @@ const Dashboard = ({ currentUser }) => {
           <Text>版本 1.0.0</Text>
         </div>
       </Drawer>
+      
+      {/* 修改昵称模态框 */}
+      <Modal
+        title="修改昵称"
+        open={editModalVisible}
+        onOk={handleEditNickname}
+        onCancel={() => setEditModalVisible(false)}
+      >
+        <Input
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          placeholder="请输入新昵称"
+          style={{ marginBottom: '20px' }}
+        />
+      </Modal>
+      
+      {/* 修改头像模态框 */}
+      <Modal
+        title="修改头像"
+        open={avatarModalVisible}
+        onCancel={() => setAvatarModalVisible(false)}
+        footer={null}
+      >
+        <Upload
+          name="avatar"
+          showUploadList={false}
+          action="#"
+          customRequest={handleAvatarUpload}
+          accept="image/*"
+        >
+          <Button icon={<EditOutlined />}>上传头像</Button>
+        </Upload>
+        <div style={{ marginTop: '20px' }}>
+          <Text type="secondary">支持JPG、PNG等图片格式</Text>
+        </div>
+      </Modal>
+      
+      {/* 添加收藏网址模态框 */}
+      <Modal
+        title="添加收藏网址"
+        open={newBookmarkModalVisible}
+        onOk={handleAddBookmark}
+        onCancel={() => setNewBookmarkModalVisible(false)}
+      >
+        <Input
+          value={newBookmark.title}
+          onChange={(e) => setNewBookmark({ ...newBookmark, title: e.target.value })}
+          placeholder="网站标题"
+          style={{ marginBottom: '16px' }}
+        />
+        <Input
+          value={newBookmark.url}
+          onChange={(e) => setNewBookmark({ ...newBookmark, url: e.target.value })}
+          placeholder="网站网址"
+          style={{ marginBottom: '16px' }}
+        />
+        <TextArea
+          value={newBookmark.description}
+          onChange={(e) => setNewBookmark({ ...newBookmark, description: e.target.value })}
+          placeholder="网站描述（可选）"
+          rows={4}
+        />
+      </Modal>
     </Layout>
   );
 };

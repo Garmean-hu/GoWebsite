@@ -54,7 +54,7 @@ function Home({ searchTerm }) {
   }, [images.length]);
 
   // 分类列表
-  const categories = ['全部', '学习', '娱乐', '生活', '新闻', '购物', 'DevOps', '绅士',];
+  const categories = ['全部', '学习', '娱乐', '生活', '新闻', '购物', 'DevOps', '游戏', '绅士',];
   
   // DevOps子分类列表
   const devOpsSubcategories = [
@@ -257,6 +257,21 @@ function Home({ searchTerm }) {
     { name: '考拉海购', pinyin: 'kaolahigou', url: 'https://www.kaola.com/', text: '考拉海购官方网址', category: '购物', description: '考拉海购是阿里巴巴旗下的跨境电商平台，销售海外商品。' },
     { name: '美团外卖', pinyin: 'meituanwaimai', url: 'https://waimai.meituan.com/', text: '美团外卖官方网址', category: '购物', description: '美团外卖是美团公司的外卖配送服务，提供餐饮外卖。' },
     { name: '饿了么', pinyin: 'eleme', url: 'https://www.ele.me/', text: '饿了么官方网址', category: '购物', description: '饿了么是阿里巴巴旗下的外卖配送服务，提供餐饮外卖。' },
+
+    // 游戏类
+    { name: 'Steam', pinyin: 'steam', url: 'https://store.steampowered.com/', text: 'Steam官方网址', category: '游戏', description: 'Steam是Valve开发的数字发行平台，提供游戏购买、下载和社区功能。' },
+    { name: 'Epic Games', pinyin: 'epicgames', url: 'https://www.epicgames.com/store/zh-CN/', text: 'Epic Games官方网址', category: '游戏', description: 'Epic Games Store是Epic Games开发的数字发行平台，提供游戏购买和下载。' },
+    { name: 'Origin', pinyin: 'origin', url: 'https://www.origin.com/cn/zh-tw/', text: 'Origin官方网址', category: '游戏', description: 'Origin是EA开发的数字发行平台，提供EA游戏的购买和下载。' },
+    { name: 'Uplay', pinyin: 'uplay', url: 'https://uplay.ubisoft.com/', text: 'Uplay官方网址', category: '游戏', description: 'Uplay是Ubisoft开发的数字发行平台，提供Ubisoft游戏的购买和下载。' },
+    { name: 'GOG', pinyin: 'gog', url: 'https://www.gog.com/', text: 'GOG官方网址', category: '游戏', description: 'GOG是CD Projekt Red开发的数字发行平台，提供无DRM的游戏购买和下载。' },
+    { name: 'Battle.net', pinyin: 'battlenet', url: 'https://www.battle.net/zh-cn/', text: 'Battle.net官方网址', category: '游戏', description: 'Battle.net是Blizzard开发的数字发行平台，提供Blizzard游戏的购买和下载。' },
+    { name: 'Xbox', pinyin: 'xbox', url: 'https://www.xbox.com/zh-CN', text: 'Xbox官方网址', category: '游戏', description: 'Xbox是Microsoft开发的游戏主机平台，提供游戏购买和订阅服务。' },
+    { name: 'PlayStation', pinyin: 'playstation', url: 'https://www.playstation.com/zh-hans-hk/', text: 'PlayStation官方网址', category: '游戏', description: 'PlayStation是Sony开发的游戏主机平台，提供游戏购买和订阅服务。' },
+    { name: 'Nintendo', pinyin: 'nintendo', url: 'https://www.nintendo.com/zh/', text: 'Nintendo官方网址', category: '游戏', description: 'Nintendo是日本的游戏公司，提供Switch等游戏主机和游戏。' },
+    { name: 'GameSpot', pinyin: 'gamespot', url: 'https://www.gamespot.com/', text: 'GameSpot官方网址', category: '游戏', description: 'GameSpot是知名的游戏媒体网站，提供游戏新闻、评测和攻略。' },
+    { name: 'IGN', pinyin: 'ign', url: 'https://www.ign.com/', text: 'IGN官方网址', category: '游戏', description: 'IGN是知名的游戏媒体网站，提供游戏新闻、评测和攻略。' },
+    { name: '游民星空', pinyin: 'youminxingkong', url: 'https://www.gamersky.com/', text: '游民星空官方网址', category: '游戏', description: '游民星空是中国知名的游戏媒体网站，提供游戏新闻、下载和攻略。' },
+    { name: '3DMGAME', pinyin: 'sandaimegame', url: 'https://www.3dmgame.com/', text: '3DMGAME官方网址', category: '游戏', description: '3DMGAME是中国知名的游戏媒体网站，提供游戏新闻、下载和攻略。' },
 
 // 绅士类
     { name: '51吃瓜网', pinyin: 'wuyichiguawang', url: 'https://wikiwiki.hwfhetxv.xyz/', text: '51吃瓜网官方网址', category: '绅士' },
